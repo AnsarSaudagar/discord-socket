@@ -39,6 +39,26 @@ app.get('/new-message/:userId', (req, res) => {
         "success": true
     })
 });
+app.get('/send-request/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const socketId = userSockets[userId];
+    if(socketId){
+        io.to(socketId).emit("send_request");
+    }
+    return res.json({
+        "success": true
+    })
+});
+app.get('/accept-request/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const socketId = userSockets[userId];
+    if(socketId){
+        io.to(socketId).emit("accept_request");
+    }
+    return res.json({
+        "success": true
+    })
+});
 
 // app.get("/", (req, res) => {
 //   res.json({
