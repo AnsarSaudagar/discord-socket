@@ -105,30 +105,31 @@ app.get("/get-user-profile-color/:id", async (req, res) => {
 });
 
 app.post("/get-user-profile-colors", async (req, res) => {
-    try {
-      const userIds = req.body.ids;  // Array of user IDs from the request body
-      const colorData = await Promise.all(
-        userIds.map(async (userId) => {
-          const key = COLOR_KEY + userId;
-          const cachedData = await redisClient.get(key);
-  
-          if (cachedData) {
-            return { userId, color: cachedData, source: "cache" };
-          }
-  
-          const randomColor = colorArr[Math.floor(Math.random() * colorArr.length)];
-          await redisClient.setEx(key, 3600, randomColor);
-  
-          return { userId, color: randomColor, source: "generated" };
-        })
-      );
-  
-      res.json({ colorData });
-    } catch (err) {
-      console.error("Error retrieving colors:", err);
-      res.status(500).send("Server Error");
-    }
-  });
+  try {
+    const userIds = req.body.ids; // Array of user IDs from the request body
+    const colorData = await Promise.all(
+      userIds.map(async (userId) => {
+        const key = COLOR_KEY + userId;
+        const cachedData = await redisClient.get(key);
+
+        if (cachedData) {
+          return { userId, color: cachedData, source: "cache" };
+        }
+
+        const randomColor =
+          colorArr[Math.floor(Math.random() * colorArr.length)];
+        await redisClient.setEx(key, 3600, randomColor);
+
+        return { userId, color: randomColor, source: "generated" };
+      })
+    );
+
+    res.json({ colorData });
+  } catch (err) {
+    console.error("Error retrieving colors:", err);
+    res.status(500).send("Server Error");
+  }
+});
 
 server.listen(PORT, () => {
   console.log("Server Listening on PORT:", PORT);
