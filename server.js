@@ -5,6 +5,7 @@ const cors = require("cors");
 const redisClient = require("./config/redisClient");
 const userRoutes = require("./routes/userRoutes");
 const handleSocketConnection = require("./handlers/socketHandler");
+const mailHandler = require("./handlers/emailHandler");
 
 const app = express();
 const server = http.createServer(app);
@@ -35,6 +36,21 @@ const io = new Server(server, {
 });
 
 handleSocketConnection(io);
+
+var mailOptions = {
+  from: "ansartest45@gmail.com",
+  to: "ansarsaudagar40@gmail.com",
+  subject: "This is a test: test",
+  text: "Mail for test",
+};
+
+mailHandler.sendMail(mailOptions, function (error, info) {
+  if (error) {
+    console.log(error);
+  } else {
+    console.log("Email sent: " + info.response);
+  }
+});
 
 // Start server
 server.listen(PORT, () => {
