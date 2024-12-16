@@ -25,7 +25,7 @@ const colorArr = [
 
 // Create Redis client and connect
 const redisClient = redis.createClient({
-  url: "redis://red-ctdjisaj1k6c73dqr8lg:6379"
+  // url: "redis://red-ctdjisaj1k6c73dqr8lg:6379"
 });
 redisClient.on("error", (err) => console.error("Redis error:", err));
 
@@ -55,6 +55,19 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     delete userSockets[userId];
     console.log(`User ${userId} disconnected`);
+  });
+
+  socket.on("offer", (data) => {
+    console.log(data.target);
+    socket.to(data.target).emit("offer", data);
+  });
+
+  socket.on("answer", (data) => {
+    socket.to(data.target).emit("answer", data);
+  });
+
+  socket.on("ice-candidate", (data) => {
+    socket.to(data.target).emit("ice-candidate", data);
   });
 });
 
